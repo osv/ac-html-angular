@@ -5,11 +5,14 @@ use warnings;
 
 use Carp;
 
-sub new {
-    my $class   = shift;
-    my $options = shift;
+require Exporter;
+our @ISA       = qw(Exporter);
+our @EXPORT_OK = qw(snake_case parse);
 
-    return bless( {}, $class );
+sub snake_case {
+    my $text = shift;
+    $text =~s/([A-Z])/-\l$1/g;
+    return $text;
 }
 
 sub parse {
@@ -41,8 +44,6 @@ sub parse {
         my $directive = $1;
 
         $result->{tags}->{$directive} |= '';
-        
-        print "DIRECTIVE: $directive\n";
 
     }
 
