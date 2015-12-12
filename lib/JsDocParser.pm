@@ -32,18 +32,21 @@ sub parse {
                             .*?   # other stuff
                         )
                         \*/
-                    |xgsi
+                    |xgsim
       )
     {
 
         my ( $indent, $body ) = ( $1, $2 );
-
+        print "BODY: '$body'\n";
+        
         # remove comments
         $body =~ s/^$indent( \* |\s{3})//mg;
         next unless ( $body =~ m|\@name\s+(\w+)| );
         my $directive = $1;
 
-        $result->{tags}->{$directive} |= '';
+        my ($doc) = $body =~ m/\@description\n(.*)\n\s*/gism;
+            
+        $result->{tags}->{$directive} |= $doc || '';
 
     }
 
