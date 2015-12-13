@@ -20,8 +20,6 @@ sub snake_case {
 sub parse {
     my $text = shift;
 
-    my $any = '(?:[*]/)*';
-
     my $result;
 
     while (
