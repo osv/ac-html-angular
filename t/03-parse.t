@@ -114,7 +114,45 @@ TEST
         },
     },
 
-    
+    '@restrict A @element ANY - should create global attribute' => {
+        text => <<'TEST'
+/**
+ * @ngdoc directive
+ * @name ngCloak
+ * @restrict A
+ * @element ANY
+ */
+TEST
+        ,
+        expect => {
+            'attributes' => {
+                'global' => {
+                    'ngCloak' => '',
+                }
+            }
+        },
+    },
+
+        '@restrict A @element input, form - should create attributes for "input" and "form"' => {
+        text => <<'TEST'
+/**
+ * @ngdoc directive
+ * @name ngCloak
+ * @restrict A
+ * @description
+ * some doc
+ * @element input, form
+ */
+TEST
+        ,
+        expect => {
+            'attributes' => {
+                'input' => { 'ngCloak' => 'some doc'},
+                'form' => { 'ngCloak' => 'some doc'},
+            }
+        },
+    },
+
 );
 
 while ( my ( $test_name, $test ) = each %tests ) {

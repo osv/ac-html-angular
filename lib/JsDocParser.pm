@@ -60,8 +60,9 @@ sub parse {
           map { $_ => 1 }
           split( / /x, ( $jsdoc_items{'@restrict'} || ['A'] )->[0] );
 
-        my @elements =
-          split( /,\s*/, ( $jsdoc_items{'@elements'} || ['ANY'] )->[0] );
+        my %elements =
+          map { $_ => 1 }
+          split( /,\s*/, ( $jsdoc_items{'@element'} || ['ANY'] )->[0] );
 
         my $doc = $jsdoc_items{'@description'}[0] || '';
 
@@ -72,8 +73,8 @@ sub parse {
             # each @param in jsdoc is directive's attribute
             foreach my $jsdoc_param ( @{ $jsdoc_items{'@param'} } ) {
 
-                # parse str like '{string=} ngRequired Adds `required` attribute and'
-                # get           ---------$1-^-------$2-^
+           # parse str like '{string=} ngRequired Adds `required` attribute and'
+           # get           ---------$1-^-------$2-^
                 if (
                     $jsdoc_param =~ m /
                                      \{.*?\}
@@ -94,10 +95,17 @@ sub parse {
 
         # attribute
         if ( $restricts{A} ) {
-            print "XXXXXXXXXXXXXX\n";
-            print "$body\n";
-            print "indent '$indent'\n";
+            if ( $elements{ANY} ) {
+                $result->{attributes}->{global}->{$directive} |= $doc;
+            }
+            else {
+                foreach my $tag ( sort keys %elements ) {
+                    print "$tag\n";
 
+                    $result->{attributes}->{$tag}->{$directive} |= $doc;
+                }
+
+            }
         }
 
     }
