@@ -4,14 +4,16 @@ use strict;
 use warnings;
 
 use Carp;
+use Data::Dumper;
 
 require Exporter;
+
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(snake_case parse);
 
 sub snake_case {
     my $text = shift;
-    $text =~s/([A-Z])/-\l$1/g;
+    $text =~ s/([A-Z])/-\l$1/g;
     return $text;
 }
 
@@ -24,7 +26,7 @@ sub parse {
 
     while (
         $text =~ m|
-                        ^(\s*)  # save indent space
+                      ^([ ]*)  # save indent space
                         /\*\*   # start jsdoc comment
                         (.*?
                             \@ngDoc\s+directive # @ngDoc directive
@@ -39,6 +41,7 @@ sub parse {
 
         # remove comments
         $body =~ s/^$indent(\s\*\s?|\s{3})//mg;
+
         next unless ( $body =~ m|\@name\s+(\w+)| );
         my $directive = $1;
 
@@ -54,9 +57,50 @@ sub parse {
             }
         }
 
+        # @restricts EAC - E - tag, - A attribute, C - class
+        my %restricts =
+          map { $_ => 1 }
+          split( / /x, ( $jsdoc_items{'@restrict'} || ['A'] )->[0] );
+
+        my @elements =
+          split( /,\s*/, ( $jsdoc_items{'@elements'} || ['ANY'] )->[0] );
+
         my $doc = $jsdoc_items{'@description'}[0] || '';
 
-        $result->{tags}->{$directive} |= $doc;
+        # if element
+        if ( $restricts{E} ) {
+            $result->{tags}->{$directive} |= $doc;
+
+            # each @param in jsdoc is directive's attribute
+            foreach my $jsdoc_param ( @{ $jsdoc_items{'@param'} } ) {
+
+                # parse str like '{string=} ngRequired Adds `required` attribute and'
+                # get           ---------$1-^-------$2-^
+                if (
+                    $jsdoc_param =~ m /
+                                     \{.*?\}
+                                     \s+
+                                     (\w+)
+                                     \s+
+                                     (.*)
+                                 /xs
+                  )
+                {
+                    my ( $name, $doc ) = ( $1, $2 );
+
+                    $result->{attributes}->{$directive}->{$name} = $2;
+                }
+            }
+
+        }
+
+        # attribute
+        if ( $restricts{A} ) {
+            print "XXXXXXXXXXXXXX\n";
+            print "$body\n";
+            print "indent '$indent'\n";
+
+        }
 
     }
 

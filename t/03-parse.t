@@ -20,8 +20,10 @@ TEST
     },
     'One diretive @name' => {
         text => <<'TEST'
+blabla
  /**
   * @ngdoc directive
+  * @restrict E
   * @name ngCloak
   */
 TEST
@@ -35,12 +37,14 @@ TEST
         text => <<'TEST'
  /**
   * @ngdoc directive
+  * @restrict E
   * @name ngCloak
   *
   */
-
+  
  /**
   * @ngdoc directive
+  * @restrict E
   * @name ngCloak2
   */
 TEST
@@ -55,6 +59,7 @@ TEST
     /**
      * @ngdoc directive
      * @name ngCloak
+     * @restrict E
      * @describe
      * @description
      * Doc line 1
@@ -72,6 +77,7 @@ TEST
     /**
      * @ngdoc directive
      * @name ngCloak
+     * @restrict E
      * @describe
      * @description
      * Doc line 1
@@ -83,7 +89,32 @@ TEST
         expect => {
             tags => { ngCloak => "Doc line 1\ndoc \@link 2" }
         }
-      }
+    },
+
+    '@param - create attribute for diretive' => {
+        text => <<'TEST'
+ /**
+  * @ngdoc directive
+  * @name ngCloak
+  * @restrict E
+  * @param {string} ngModel doc line1
+  *   doc line 2
+  * @param {string=} ngMin second doc 
+  */
+TEST
+        ,
+        expect => {
+            tags => { ngCloak => '' },
+            'attributes' => {
+                'ngCloak' => {
+                    'ngModel' => "doc line1\n  doc line 2",
+                    'ngMin' => 'second doc'
+                }
+            }
+        },
+    },
+
+    
 );
 
 while ( my ( $test_name, $test ) = each %tests ) {
