@@ -66,6 +66,24 @@ TEST
             tags => { ngCloak => "Doc line 1\ndoc line 2" }
         }
     },
+
+    '@description documentation up to next @{directive}' => {
+        text => <<'TEST'
+    /**
+     * @ngdoc directive
+     * @name ngCloak
+     * @describe
+     * @description
+     * Doc line 1
+     * doc @link 2
+     * @test
+     */
+TEST
+        ,
+        expect => {
+            tags => { ngCloak => "Doc line 1\ndoc \@link 2" }
+        }
+      }
 );
 
 while ( my ( $test_name, $test ) = each %tests ) {

@@ -21,7 +21,6 @@ sub parse {
     my $any = '(?:[*]/)*';
 
     my $result;
-    print "test: $text\n";
 
     while (
         $text =~ m|
@@ -37,16 +36,27 @@ sub parse {
     {
 
         my ( $indent, $body ) = ( $1, $2 );
-        print "BODY: '$body'\n";
-        
+
         # remove comments
-        $body =~ s/^$indent( \* |\s{3})//mg;
+        $body =~ s/^$indent(\s\*\s?|\s{3})//mg;
         next unless ( $body =~ m|\@name\s+(\w+)| );
         my $directive = $1;
 
-        my ($doc) = $body =~ m/\@description\n(.*)\n\s*/gism;
-            
-        $result->{tags}->{$directive} |= $doc || '';
+        # split by \@XXX and setup structure { \@XXX => '..rest'}
+        my %jsdoc_items;
+
+        $body =~ s/(^\s*)\@/_SPLIT_\@/gms;
+        foreach my $jsdoc_item ( split( /_SPLIT_/, $body ) ) {
+            if ( $jsdoc_item =~ m /(\@\w+)\s+(.*)[\s\n]*/ms ) {
+                my ( $item_name, $rest ) = ( $1, $2 );
+                $rest =~ s/[\n\s]+$//s;
+                push @{ $jsdoc_items{$item_name} }, $rest;
+            }
+        }
+
+        my $doc = $jsdoc_items{'@description'}[0] || '';
+
+        $result->{tags}->{$directive} |= $doc;
 
     }
 
