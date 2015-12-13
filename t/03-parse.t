@@ -154,6 +154,27 @@ TEST
         },
       },
 
+    '09 @ngDoc input' => {
+        text => <<'TEST'
+    /**
+     * @ngdoc input
+     * @name input[date]
+     * @param {string} ngModel data-bind to.
+     * @param {string=} name Property name.
+     */
+TEST
+        ,
+        expect => {
+            'tags'       => { input => '' },
+            'attributes' => {
+                'input' => {
+                    'ngModel' => 'data-bind to.',
+                    'name'    => 'Property name.'
+                },
+            }
+        },
+      },
+
 );
 
 foreach my $test_name ( sort keys %tests ) {
