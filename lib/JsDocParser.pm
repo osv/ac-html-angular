@@ -36,7 +36,7 @@ sub parse {
                       ^([ ]*)  # save indent space
                         /\*\*   # start jsdoc comment
                         (.*?
-                            \@ngDoc\s+directive # @ngDoc directive
+                            \@ngDoc\s+((?:directive\|input)) # @ngDoc directive
                             .*?   # other stuff
                         )
                         \*/
@@ -44,13 +44,15 @@ sub parse {
       )
     {
 
-        my ( $indent, $body ) = ( $1, $2 );
+        my ( $indent, $body, $ngdoc_type ) = ( $1, $2, $3 );
 
         # remove comments
         $body =~ s/^$indent(\s\*\s?|\s{3})//mg;
 
         next unless ( $body =~ m|\@name\s+(\w+)| );
         my $directive = $1;
+
+        $directive =~ s/\[.*\]//;
 
         # split by \@XXX and setup structure { \@XXX => '..rest'}
         my %jsdoc_items;
@@ -65,9 +67,17 @@ sub parse {
         }
 
         # @restricts EAC - E - tag, - A attribute, C - class
+        my $jsdoc_restricts;
+        if ( $ngdoc_type eq 'input' ) {
+            $jsdoc_restricts = 'E';
+        }
+        else {
+            $jsdoc_restricts = ( $jsdoc_items{'@restrict'} || ['A'] )->[0];
+        }
+
         my %restricts =
           map { $_ => 1 }
-          split( / /x, ( $jsdoc_items{'@restrict'} || ['A'] )->[0] );
+          split( / /x, $jsdoc_restricts );
 
         my %elements =
           map { $_ => 1 }
