@@ -9,11 +9,20 @@ use Data::Dumper;
 require Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(snake_case parse);
+our @EXPORT_OK = qw(snake_case sanitize_text parse);
 
 sub snake_case {
     my $text = shift;
     $text =~ s/([A-Z])/-\l$1/g;
+    return $text;
+}
+
+sub sanitize_text {
+    my $text = shift;
+
+    # '{@link foo/bar baz}' - keep only 'baz'
+    $text =~ s/\{\@link.*?\s([^\s]+)\s*?\}/$1/gx;
+
     return $text;
 }
 

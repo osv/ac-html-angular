@@ -7,4 +7,4 @@
 use Test::More qw( no_plan );
 BEGIN { use_ok( JsDocParser ); }
 
-can_ok('JsDocParser', qw(parse snake_case))
+can_ok('JsDocParser', qw(parse snake_case sanitize_text))
