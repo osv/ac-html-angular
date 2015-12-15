@@ -119,8 +119,6 @@ sub parse {
             }
             else {
                 foreach my $tag ( sort keys %elements ) {
-                    print "$tag\n";
-
                     $result->{attributes}->{$tag}->{$directive} |= $doc;
                 }
 
