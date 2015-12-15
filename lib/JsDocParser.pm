@@ -9,7 +9,7 @@ use Data::Dumper;
 require Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(snake_case sanitize_text parse);
+our @EXPORT_OK = qw(snake_case sanitize_text parse merge_parse_result);
 
 sub snake_case {
     my $text = shift;
@@ -131,6 +131,42 @@ sub parse {
 
     return $result;
 
+}
+
+# maybe later add merge documentation too
+sub merge_parse_result {
+    my ( $a, $b ) = @_;
+
+    my $result;
+
+    if ( exists $a->{tags} ) {
+        $result->{tags} = $a->{tags};
+    }
+
+    if ( exists $b->{tags} ) {
+        while ( my ( $tag, $doc ) = each( %{$b->{tags}} ) ) {
+            if ( !exists $result->{tags}->{$tag} ) {
+                $result->{tags}->{$tag} = $doc;
+            }
+        }
+    }
+
+    # attributes
+
+    if ( exists $a->{attributes} ) {
+        while ( my ( $tag, $attributes ) = each( %{ $a->{attributes} } ) ) {
+            $result->{attributes} = $a->{attributes};
+        }
+    }
+
+    if ( exists $b->{attributes} ) {
+        while ( my ( $tag, $attributes ) = each( %{ $b->{attributes} } ) ) {
+            while ( my ( $attribute, $doc ) = each( %{$attributes} ) ) {
+                $result->{attributes}->{$tag}->{$attribute} = $doc;
+            }
+        }
+    }
+    return $result;
 }
 
 1;
