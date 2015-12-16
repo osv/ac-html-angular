@@ -21,7 +21,7 @@ sub sanitize_text {
     my $text = shift;
 
     # '{@link foo/bar baz}' - keep only 'baz'
-    $text =~ s/\{\@link.*?\s([^\s]+)\s*?\}/$1/gx;
+    $text =~ s/\{\@link\s+[^\s]+\s+(.*?)\}/$1/g;
 
     return $text;
 }
