@@ -33,21 +33,22 @@ sub parse {
 
     while (
         $text =~ m|
-                      ^([ ]*)  # save indent space
+                      ^[ ]*
                         /\*\*   # start jsdoc comment
-                        (.*?
-                            \@ngDoc\s+((?:directive\|input)) # @ngDoc directive
-                            .*?   # other stuff
-                        )
-                        \*/
+                        (.*?)
+                        \*/     # end jsdoc comment
                     |xgsim
       )
-    {
+        {
+            my $body = $1; 
+            next unless $body =~m|
+                                     \@ngDoc\s+((?:directive\|input)) # @ngDoc directive
+                                 |xgsim;
 
-        my ( $indent, $body, $ngdoc_type ) = ( $1, $2, $3 );
+        my $ngdoc_type = $1;
 
         # remove comments
-        $body =~ s/^$indent(\s\*\s?|\s{3})//mg;
+        $body =~ s/^(\s*\*\s?|\s{3})//mg;
 
         next unless ( $body =~ m|\@name\s+(\w+)| );
         my $directive = $1;
@@ -84,10 +85,10 @@ sub parse {
           split( /,\s*/, ( $jsdoc_items{'@element'} || ['ANY'] )->[0] );
 
         my $doc = $jsdoc_items{'@description'}[0] || '';
-
+        
         # if element
         if ( $restricts{E} ) {
-            $result->{tags}->{$directive} |= $doc;
+            $result->{tags}->{$directive} = $doc;
 
             # each @param in jsdoc is directive's attribute
             foreach my $jsdoc_param ( @{ $jsdoc_items{'@param'} } ) {
@@ -115,11 +116,11 @@ sub parse {
         # attribute
         if ( $restricts{A} ) {
             if ( $elements{ANY} ) {
-                $result->{attributes}->{global}->{$directive} |= $doc;
+                $result->{attributes}->{global}->{$directive} = $doc;
             }
             else {
                 foreach my $tag ( sort keys %elements ) {
-                    $result->{attributes}->{$tag}->{$directive} |= $doc;
+                    $result->{attributes}->{$tag}->{$directive} = $doc;
                 }
 
             }
