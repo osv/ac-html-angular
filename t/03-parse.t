@@ -142,7 +142,7 @@ TEST
  * @restrict A
  * @description
  * some doc
- * @element input, form
+ * @element INPUT, form
  */
 TEST
         ,

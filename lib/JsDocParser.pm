@@ -1,3 +1,5 @@
+# parse jsdoc and build element, attribute list
+
 package JsDocParser;
 
 use strict;
@@ -120,6 +122,7 @@ sub parse {
             }
             else {
                 foreach my $tag ( sort keys %elements ) {
+                    $tag = lc $tag; # may be sometimes DETAILS, OPTION but never ngFoo
                     $result->{attributes}->{$tag}->{$directive} = $doc;
                 }
 
