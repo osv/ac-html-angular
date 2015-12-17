@@ -4,7 +4,7 @@
 
 ;; Author: Olexandr Sydorchuk <olexandr.syd@gmail.com>
 ;; Version: 1.5.0
-;; Keywords: html, auto-complete, bootstrap, cssx
+;; Keywords: html, auto-complete, angular
 ;; Package-Requires: ((web-completion-data "0.1"))
 ;; URL: https://github.com/osv/ac-html-bootstrap
 
