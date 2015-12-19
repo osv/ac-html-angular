@@ -17,3 +17,10 @@ if you are using ac-html 0.4 series, you may downgrade `ac-html` aka reinstall f
 
 `ac-html` 0.4 will be supported in the future.
 
+### Related projects
+
+You may be interested in next projects:
+
+- [ac-html](https://github.com/cheunghy/ac-html) - Same as company-web, but `auto-completion` completion framework used;
+- [ac-html-bootstrap](https://github.com/osv/ac-html-bootstrap) - Twitter:Bootstrap and Font Awesome completion data;
+- [ac-html-csswatcher](https://github.com/osv/ac-html-csswatcher) - Parse your project's CSS/Less and build completion (classes, ids)
