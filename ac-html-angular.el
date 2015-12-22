@@ -44,7 +44,7 @@
   (interactive)
   (make-local-variable 'web-completion-data-sources)
   (unless (assoc "Angular15" web-completion-data-sources)
-    (setq web-completion-data-sources (cons (cons "Angular15" 'ac-html-angular-source-dir) web-completion-data-sources))))
+    (push (cons "Angular15" 'ac-html-angular-source-dir) web-completion-data-sources)))
 
 ;;;###autoload
 (defalias 'company-web-angular+ 'ac-html-angular+)
